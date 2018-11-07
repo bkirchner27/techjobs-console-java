@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -51,7 +52,11 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        return allJobs;
+        ArrayList<HashMap<String, String>> allJobsClone =  new ArrayList<>(allJobs.size());
+        for (HashMap<String, String> job : allJobs) {
+            allJobsClone.add(job);
+        }
+        return allJobsClone;
     }
 
     /**
@@ -65,6 +70,25 @@ public class JobData {
      * @param value Value of teh field to search for
      * @return List of all jobs matching the criteria
      */
+    public static ArrayList<HashMap<String,String>> findByValue (String value) {
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String,String> row : allJobs) {
+            boolean rowAdded = false;
+            for (Map.Entry<String, String> field : row.entrySet()) {
+                if (rowAdded == false) {
+                    if (field.getValue().toLowerCase().contains(value.toLowerCase())) {
+                        jobs.add(row);
+                        rowAdded = true;
+                    }
+                }
+            }
+        }
+        return jobs;
+    }
+
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
 
         // load data, if not already loaded
@@ -76,7 +100,7 @@ public class JobData {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
